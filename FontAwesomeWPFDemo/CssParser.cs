@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace FontAwesomeWPFDemo
+{
+    public class CssParser
+    {
+        private List<string> _styleSheets;
+        private SortedList<string, StyleClass> _scc;
+        public SortedList<string, StyleClass> Styles
+        {
+            get { return this._scc; }
+            set { this._scc = value; }
+        }
+
+        public CssParser()
+        {
+            _styleSheets = new List<string>();
+            _scc = new SortedList<string, StyleClass>();
+        }
+
+        public void AddStyleSheet(string path)
+        {
+            this._styleSheets.Add(path);
+            ProcessStyleSheet(path);
+        }
+
+        private void ProcessStyleSheet(string path)
+        {
+            string content = CleanUp(File.ReadAllText(path));
+            string[] parts = content.Split('}');
+            foreach (string s in parts)
+            {
+                if (CleanUp(s).IndexOf('{') > -1)
+                {
+                    FillStyleClass(s);
+                }
+            }
+        }
+
+        private void FillStyleClass(string s)
+        {
+            StyleClass sc = null;
+            string[] parts = s.Split('{');
+            string styleName = CleanUp(parts[0]).Trim().ToLower();
+
+            if (_scc.ContainsKey(styleName))
+            {
+                sc = _scc[styleName];
+                _scc.Remove(styleName);
+            }
+            else
+            {
+                sc = new StyleClass();
+            }
+
+            sc.Name = styleName;
+
+            string[] atrs = CleanUp(parts[1]).Replace("}", "").Split(';');
+            foreach (string a in atrs)
+            {
+                if (a.Contains(":"))
+                {
+                    string _key = a.Split(':')[0].Trim().ToLower();
+                    if (sc.Attributes.ContainsKey(_key))
+                    {
+                        sc.Attributes.Remove(_key);
+                    }
+
+                    sc.Attributes.Add(_key, a.Split(':')[1].Trim().ToLower());
+                }
+            }
+
+            _scc.Add(sc.Name, sc);
+        }
+
+        private string CleanUp(string s)
+        {
+            string temp = s;
+            string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
+            Regex r = new Regex(reg);
+            temp = r.Replace(temp, "");
+            temp = temp.Replace("\r", "").Replace("\n", "");
+            return temp;
+        }
+
+
+        private string CleanFontAwesomeKey(string style)
+        {
+            if (string.IsNullOrEmpty(style))
+                throw new ArgumentNullException("style");
+
+            var cleanedFaKey = style.Replace(".fa-", "").Replace("-", "_");
+            cleanedFaKey = cleanedFaKey.Replace(":before", "");
+            
+            return UppercaseFirst(cleanedFaKey);
+        }
+
+        private string CleanFontAwesomeValue(StyleClass style)
+        {
+            // Add \u(unicode) so that xaml parser interprets right the font code.
+            var cleanedFaValue= style.Attributes.Values[0].Replace("\"\\f", "\"\\uf");
+            return cleanedFaValue;
+
+        }
+
+        public Dictionary<string, string> GetFontAwesomeIcons(string path)
+        {
+            AddStyleSheet(path);
+
+            // select the icons selectors
+            var iconStyles = Styles
+                            .Where(s => s.Value.Attributes.ContainsKey("content")).ToList();
+            
+            var fonts = new Dictionary<string, string>();
+            foreach (var style in iconStyles)
+            {
+                string fontname = string.Empty;
+
+                if (style.Key.Contains(","))
+                {
+                    var splits = style.Key.Split(',');
+                    foreach (var item in splits)
+                    {
+                        fontname = CleanFontAwesomeKey(item);
+                        fonts.Add(fontname, CleanFontAwesomeValue(style.Value));
+                    }
+
+                    continue;
+
+                }
+
+                fontname = CleanFontAwesomeKey(style.Key);
+                fonts.Add(fontname, CleanFontAwesomeValue(style.Value));
+            }
+
+            return fonts;
+        }
+
+        public class StyleClass
+        {
+            private string _name = string.Empty;
+            public string Name
+            {
+                get { return _name; }
+                set { _name = value; }
+            }
+
+            private SortedList<string, string> _attributes =
+                new SortedList<string, string>();
+           
+            public SortedList<string, string> Attributes
+            {
+                get { return _attributes; }
+                set { _attributes = value; }
+            }
+        }
+
+
+        private string UppercaseFirst(string s)
+        {
+            // Check for empty string.
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+
+            // check if first letter is a number
+            // if true add an underscore at the beginning otherwise c# compiler will complain
+            // that variable name is starting with numbers
+            if (char.IsNumber(s[0]))
+                s = s.Insert(0, "_");
+
+            // Return char and concat substring.
+            return char.ToUpper(s[0]) + s.Substring(1);
+        }
+        
+    } 
+}

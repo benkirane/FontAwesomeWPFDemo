@@ -1,0 +1,63 @@
+﻿<Window x:Class="FontAwesomeWPFDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Ui="clr-namespace:FontAwesomeWPFDemo"
+        Title="FontAwesome Demo" Height="339" Width="286">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="FontAwesomeStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily"  Value="pack://application:,,,/fonts/#FontAwesome" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <StackPanel VerticalAlignment="Top">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,40,0,0">
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="20" Margin="10"
+                                   Text="{x:Static Ui:Fa.Male}"
+                                   VerticalAlignment="Center" />
+
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="30" Margin="10"
+                                   Text="{x:Static Ui:Fa.Female}" Foreground="Red"
+                                   VerticalAlignment="Center" />
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="40" Margin="10"
+                                   Text="{x:Static Ui:Fa.Plug}" Foreground="Green"
+                                   VerticalAlignment="Center" />
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="50" Margin="10"
+                                   Text="{x:Static Ui:Fa.Life_bouy}" Foreground="blue"
+                                   VerticalAlignment="Center" />
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="60" Margin="10"
+                                   Text="{x:Static Ui:Fa.Lightbulb_o}" Foreground="SaddleBrown"
+                                   VerticalAlignment="Center" />
+          
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,40,0,0">
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="20" Margin="10"
+                                   Text="{x:Static Ui:Fa.File_sound_o}"
+                                   VerticalAlignment="Center" />
+
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="30" Margin="10"
+                                   Text="{x:Static Ui:Fa.Arrow_circle_down}" Foreground="Red"
+                                   VerticalAlignment="Center" />
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="40" Margin="10"
+                                   Text="{x:Static Ui:Fa.Arrow_circle_o_up}" Foreground="Green"
+                                   VerticalAlignment="Center" />
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="50" Margin="10"
+                                   Text="{x:Static Ui:Fa.File_pdf_o}" Foreground="blue"
+                                   VerticalAlignment="Center" />
+
+            <TextBlock Style="{StaticResource FontAwesomeStyle}" FontSize="60" Margin="10"
+                                   Text="{x:Static Ui:Fa.Google}" Foreground="SaddleBrown"
+                                   VerticalAlignment="Center" />
+       
+        </StackPanel>
+    </StackPanel>
+
+</Window>
