@@ -1,41 +1,52 @@
 ﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(TargetPath)" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
-<#@ import namespace="FontAwesomeWPFDemo" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ include file="CssParser.tt" #>
 
 <#@ output extension=".cs" #>
 
+
 namespace FontAwesomeWPFDemo
 {
+
     public static class Fa
     {
-				<#
-						BuildIcons();
-				#>
-		}
+		<#
+            BuildIcons();
+        #>
+	}
+
+	
 }
+
+
 <#+
 
-    private void BuildIcons()
+  
+
+private void BuildIcons()
+{
+    var parser = new CssParser();
+
+    // set the fonts path
+    string path = this.Host.ResolvePath("");
+    Directory.SetCurrentDirectory(path);
+    string fontsPath =  path + @"\fonts\font-awesome.css";
+
+    // parse the fonts
+    var fonts = parser.GetFontAwesomeIcons(fontsPath);
+
+    //  Create the static fonts fields
+    PushIndent("        ");
+    foreach (var font in fonts)
     {
-		    var parser = new CssParser();
+        WriteLine(String.Format("public static string {0} = {1};", font.Key, font.Value));
 
-				// set the fonts path
-				string path = this.Host.ResolvePath("");
-		    Directory.SetCurrentDirectory(path);
-        string fontsPath =  path + @"\fonts\font-awesome.css";
-				
-				// parse the fonts
-				var fonts = parser.GetFontAwesomeIcons(fontsPath);
-
-				// Create the static fonts fields
-				PushIndent("        ");
-        foreach (var font in fonts)
-        {
-					WriteLine(String.Format("public static string {0} = {1};", font.Key, font.Value));
-					
-				}
     }
+}
 
 #>

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ output extension=".cs" #>
 
-namespace FontAwesomeWPFDemo
-{
-    public class CssParser
+
+<#+
+public class CssParser
     {
         private List<string> _styleSheets;
         private SortedList<string, StyleClass> _scc;
@@ -95,14 +97,14 @@ namespace FontAwesomeWPFDemo
 
             var cleanedFaKey = style.Replace(".fa-", "").Replace("-", "_");
             cleanedFaKey = cleanedFaKey.Replace(":before", "");
-            
+
             return UppercaseFirst(cleanedFaKey);
         }
 
         private string CleanFontAwesomeValue(StyleClass style)
         {
             // Add \u(unicode) so that xaml parser interprets right the font code.
-            var cleanedFaValue= style.Attributes.Values[0].Replace("\"\\f", "\"\\uf");
+            var cleanedFaValue = style.Attributes.Values[0].Replace("\"\\f", "\"\\uf");
             return cleanedFaValue;
 
         }
@@ -114,7 +116,7 @@ namespace FontAwesomeWPFDemo
             // select the icons selectors
             var iconStyles = Styles
                             .Where(s => s.Value.Attributes.ContainsKey("content")).ToList();
-            
+
             var fonts = new Dictionary<string, string>();
             foreach (var style in iconStyles)
             {
@@ -151,7 +153,7 @@ namespace FontAwesomeWPFDemo
 
             private SortedList<string, string> _attributes =
                 new SortedList<string, string>();
-           
+
             public SortedList<string, string> Attributes
             {
                 get { return _attributes; }
@@ -177,6 +179,6 @@ namespace FontAwesomeWPFDemo
             // Return char and concat substring.
             return char.ToUpper(s[0]) + s.Substring(1);
         }
-        
-    } 
-}
+
+    }
+#>
